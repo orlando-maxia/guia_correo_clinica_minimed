@@ -14,7 +14,7 @@ Propósito técnico: Definir la intención global que debe guiar todas las decis
 
 ## 1.1 Objetivo primario del mensaje
 
-Generar un correo electrónico que invite al paciente a interesarse por su salud metabólica e integrarse voluntariamente al programa de control y acompañamiento ofrecido por Minimed, mediante una comunicación preventiva, accesible y no alarmista.
+Generar un correo electrónico que invite al paciente a interesarse por su salud metabólica y cardiometabólica e integrarse voluntariamente al programa de prevención y control ofrecido por Minimed, mediante una comunicación preventiva, accesible y no alarmista.
 
 ## 1.2 Objetivos secundarios
 
@@ -60,7 +60,7 @@ El sistema no está diseñado para:
 
 ## 2.3 Contexto clínico general
 
-El mensaje se enmarca dentro de un programa institucional de control y seguimiento en salud metabólica. Su finalidad es:
+El mensaje se enmarca dentro de un programa institucional de prevención y control de trastornos metabólicos, con énfasis en diabetes pero con visión de evolución hacia enfermedades cardiometabólicas. Su finalidad es:
 
 - invitar al acompañamiento preventivo
 - facilitar acceso a planes estructurados de bienestar y control
@@ -140,6 +140,26 @@ Tabla de uso interno para la interpretacion de MDLS y biomarcadores, que debe ut
 - Si solo existe data de un biomarcador, NO se calcula MDLS, pero si hay riesgo potencial se puede asignar Silver segun biomarker_risk_tier, aun si el biomarcador no es HbA1c
 - Si el único biomarcador disponible indica riesgo potencial de diabetes y/o desregulacion metabolica, se prioriza un mensaje preventivo con acompanamiento (sin explicitar el motivo)
 
+### 4.1.1 Perfiles metabolicos plausibles y asignacion de paquetes (interno)
+
+Los siguientes perfiles resumen combinaciones clinicamente plausibles entre biomarcadores y comorbilidades. Estos patrones se usan para definir `biomarker_risk_tier` cuando el MDLS no es calculable, y para evitar escenarios aislados poco probables (por ejemplo, HDL alterado de forma unica).
+
+Reglas generales:
+
+- Un perfil requiere al menos **dos biomarcadores relacionados** en alteracion coherente, o **un biomarcador + un canal de comorbilidad** (CREAT o FIB-4).
+- Un marcador aislado sin coherencia metabolica no determina paquete por si mismo; se clasifica como **bajo riesgo**.
+- La presencia de afectacion renal o hepatica relevante **eleva el paquete** cuando hay evidencia metabolica asociada, incluso si la glucosa/HbA1c es baja.
+- Si solo existe un biomarcador disponible y es clinicamente relevante (p. ej., GLU/HBA1C, TG muy alto, CREAT o FIB-4), puede clasificarse como **riesgo medio** por precaucion.
+
+| **Perfil interno** | **Patron clinico plausible** | **Biomarcadores relacionados (ejemplos)** | **biomarker_risk_tier** | **Paquete sugerido** |
+| --- | --- | --- | --- | --- |
+| Disglucemia + dislipidemia aterogenica | Alteracion conjunta de control glucemico y perfil lipidico | GLU/HBA1C alterado + TG/VLDL alto + HDL bajo o TG_HDL_RATIO alto | ALTO | GOLD |
+| Perfil hepato-metabolico | Alteracion hepatica con senales de dislipidemia y/o glucemia | ALT alto + TG/VLDL alto o TG_HDL_RATIO alto ± GLU/HBA1C alterado | ALTO | GOLD |
+| Perfil renal-metabolico | Afectacion renal con dislipidemia o disglucemia | CREAT alterado + GLU/HBA1C alterado o TG/VLDL alto | ALTO | GOLD |
+| Dislipidemia aterogenica predominante | Alteracion lipidica coherente sin disglucemia marcada | TG/VLDL alto + HDL bajo + NON_HDL o LDL alto | MEDIO | SILVER |
+| Disglucemia predominante | Alteracion glucemica sin dislipidemia marcada | GLU o HBA1C alterado con otro marcador de soporte (p. ej., TG_HDL_RATIO alto) | MEDIO | SILVER |
+| Alteraciones leves o parciales | Cambios discretos sin patron metabolico consistente | Un biomarcador aislado o hallazgos marginales | BAJO | STANDARD |
+
 | **Condicion interna** | **Recencia del ultimo examen** | **Paquete asignado (interno)** | **Urgencia narrativa interna** | **Enfoque del discurso comercial** |
 | --- | --- | --- | --- | --- |
 | MDLS_tier = ALTO | Cualquier recencia | GOLD | Alta prioridad | Invitacion a plan integral y completo de acompanamiento |
@@ -147,8 +167,8 @@ Tabla de uso interno para la interpretacion de MDLS y biomarcadores, que debe ut
 | MDLS_tier = MEDIO | >= 90 dias | SILVER | Seguimiento atrasado | "Retomar acompanamiento puede marcar diferencia" |
 | MDLS_tier = BAJO | > 365 dias | STANDARD | Seguimiento general pendiente | "Invitacion a chequeo preventivo y acompanamiento" |
 | MDLS_tier = BAJO | <= 365 dias | STANDARD | Prevencion activa | "Programa inicial para habitos y control temprano" |
-| MDLS_calculable = false AND biomarker_risk_tier = ALTO | Cualquier recencia | SILVER | Intervencion oportuna | "Acompanamiento mas estructurado para cuidar su salud" |
-| MDLS_calculable = false AND biomarker_risk_tier = MEDIO | Cualquier recencia | STANDARD | Prevencion temprana | "Etapa ideal para prevenir desregulacion metabolica" |
+| MDLS_calculable = false AND biomarker_risk_tier = ALTO | Cualquier recencia | GOLD | Alta prioridad | "Acompanamiento mas estructurado para cuidar su salud" |
+| MDLS_calculable = false AND biomarker_risk_tier = MEDIO | Cualquier recencia | SILVER | Intervencion oportuna | "Etapa ideal para prevenir desregulacion metabolica" |
 | MDLS_calculable = false AND biomarker_risk_tier = BAJO | > 365 dias | STANDARD (bienestar general) | Baja urgencia | "Programa de salud metabolica y control periodico" |
 
 ## 4.2 Prohibicion explicita de comunicacion del examen
