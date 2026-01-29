@@ -1,0 +1,121 @@
+
+METABOLIC DYSREGULATION LATENT SCORE (MDLS) - MODEL CARD
+========================================================
+
+1. MODEL OVERVIEW
+-----------------
+The MDLS is a continuous latent score that captures cardiometabolic dysregulation.
+It is designed for population surveillance and longitudinal monitoring. Kidney and
+liver burdens (CREAT, FIB-4) are treated as comorbidity channels and reported
+alongside the core cardiometabolic signal; a combined score applies small weights
+to avoid domination.
+
+Two models are provided:
+- Model A (PCA-MDLS): Transparent, interpretable baseline using first principal component
+- Model B (AE-MDLS): Nonlinear temporal autoencoder capturing longitudinal patterns
+
+2. DATA USED
+------------
+- Source: Laboratory Information System (LIS) biomarker data
+- Time period: 2022-01-01 to 2024-12-31
+- Window size: 90 days
+- Features: 9 biomarkers + 4 derived ratios
+  * Core biomarkers: GLU, HBA1C, LDL, HDL, VLDL, TG, PLT, HGB
+  * Derived: TG_HDL_RATIO, AST_ALT_RATIO, NON_HDL
+  * Comorbidity channels: CREAT (kidney), FIB-4 (liver fibrosis score)
+- Robust scaling: Applied using median/IQR from training set only
+- Train/Val/Test split: 70/15/15 by patient (no temporal leakage)
+
+3. MODEL ARCHITECTURE
+---------------------
+Model A (PCA):
+- Method: Principal Component Analysis on core cardiometabolic features
+- Components: First principal component (PC1)
+- Explained variance (core): 58.69%
+- Sign orientation: Higher MDLS = worse metabolic profile
+- Combined score: MDLS_COMBINED = MDLS_PCA_CORE + 0.15*kidney_burden + 0.15*liver_burden
+
+Model B (Temporal Autoencoder):
+- Architecture: LSTM-based encoder-decoder
+- Hidden dimension: 64
+- Latent dimension: 32
+- Layers: 2
+- Training: Masked MSE reconstruction loss
+- Normalization: Robust (median/IQR) on training set
+- Inputs: Core cardiometabolic features; kidney/liver burdens reported separately
+
+4. ASSUMPTIONS
+--------------
+- Biomarker measurements are representative of metabolic state
+- Missing data patterns are missing at random (MAR)
+- Temporal windows (90 days) capture relevant metabolic dynamics
+- Robust scaling provides appropriate normalization across biomarkers
+
+5. LIMITATIONS
+--------------
+- No external validation with clinical outcomes
+- Missing data handled via masking (no imputation)
+- Score interpretation requires clinical context
+- Not validated for diagnostic purposes
+- Population-specific (trained on specific LIS data)
+
+6. INTENDED USE
+---------------
+- Population health surveillance
+- Longitudinal monitoring of metabolic trajectories
+- Identifying patients with worsening metabolic coherence
+- Research and epidemiological studies
+- Quality improvement initiatives
+
+7. NON-INTENDED USE
+------------------
+- Diagnostic purposes
+- Individual patient risk prediction
+- Treatment decisions
+- Replacing clinical judgment
+- Use outside trained population
+
+8. VALIDATION METRICS
+---------------------
+- PCA-AE Agreement (Spearman ρ, core): 0.034
+- Correlations with key biomarkers (core):
+  * HBA1C: PCA ρ = 0.753, AE ρ = 0.346
+  * TG_HDL_RATIO: PCA ρ = 0.610, AE ρ = -0.055
+  * ALT: PCA ρ = 0.195, AE ρ = -0.005
+
+9. OUTPUTS
+----------
+- mdls_static.csv: MDLS per patient-window
+- mdls_longitudinal.csv: Trajectory metrics (slope, stability, last MDLS)
+- Model artifacts: Saved PCA and AE models
+- Diagnostic plots: Distributions, loadings, trajectories
+
+10. INTERPRETATION
+------------------
+Higher MDLS values indicate:
+- Worsening metabolic coherence
+- Increased dysregulation across multiple biomarker domains
+- Potential need for closer monitoring
+
+Lower MDLS values indicate:
+- More favorable metabolic profile
+- Better coherence across biomarkers
+- Lower dysregulation signal
+
+The score is continuous and should be interpreted in context of:
+- Patient demographics
+- Temporal trends (slope, stability)
+- Clinical presentation
+
+11. MAINTENANCE
+--------------
+- Models should be retrained periodically as data distribution shifts
+- Monitor for distribution drift
+- Validate on new data before deployment
+- Update model card with new validation results
+
+12. CONTACT
+-----------
+For questions or issues, refer to the clinical ML engineering team.
+
+Generated: 2025-12-17 13:38:54
