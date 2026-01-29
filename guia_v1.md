@@ -195,11 +195,11 @@ El paciente nunca ve nombres de biomarcadores ni el "MDLS", ni "rango", ni palab
 | **Paquete interno** | **Condición interna (uso sistema)** | **Apertura recomendada (neutral)** | **Enfoque del mensaje** | **\*CTA sugerido** |
 | --- | --- | --- | --- | --- |
 | STANDARD | MDLS_tier = BAJO con recencia ≤365d | "Queremos invitarle a un programa pensado para cuidar su salud desde etapas tempranas." | Prevención, hábitos, acompañamiento inicial | "Conozca el Plan Standard" |
-| STANDARD | MDLS_tier = BAJO con recencia >365d o biomarker_risk_tier = BAJO | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
+| STANDARD | MDLS_tier = BAJO con recencia >365d o biomarker_risk_tier = MEDIO | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
 | SILVER | MDLS_tier = MEDIO con examen reciente | "Este puede ser un buen momento para fortalecer su bienestar y seguimiento médico." | Control activo, apoyo más frecuente | "Conozca el Plan Silver" |
-| SILVER | MDLS_tier = MEDIO con recencia >90d o biomarker_risk_tier = MEDIO | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
-| SILVER | MDLS_calculable = false con un biomarcador clinicamente relevante y sin otros datos | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
-| GOLD | MDLS_tier = ALTO cualquier recencia o biomarker_risk_tier = ALTO | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
+| SILVER | MDLS_tier = MEDIO con recencia >90d o biomarker_risk_tier = ALTO | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
+| SILVER | MDLS_calculable = false con un solo biomarcador fuera de rango | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
+| GOLD | MDLS_tier = ALTO cualquier recencia | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
 
 \*CTA: _Call To Action_, "Llamada a la acción".
 
