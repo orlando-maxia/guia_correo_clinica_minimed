@@ -14,7 +14,7 @@ Propósito técnico: Definir la intención global que debe guiar todas las decis
 
 ## 1.1 Objetivo primario del mensaje
 
-Generar un correo electrónico que invite al paciente a interesarse por su salud metabólica e integrarse voluntariamente al programa de control y acompañamiento ofrecido por Minimed, mediante una comunicación preventiva, accesible y no alarmista.
+Generar un correo electrónico que invite al paciente a interesarse por su salud metabólica y cardiometabólica e integrarse voluntariamente al programa de prevención y control ofrecido por Minimed, mediante una comunicación preventiva, accesible y no alarmista.
 
 ## 1.2 Objetivos secundarios
 
@@ -60,7 +60,7 @@ El sistema no está diseñado para:
 
 ## 2.3 Contexto clínico general
 
-El mensaje se enmarca dentro de un programa institucional de control y seguimiento en salud metabólica. Su finalidad es:
+El mensaje se enmarca dentro de un programa institucional de prevención y control de trastornos metabólicos, con énfasis en diabetes pero con visión de evolución hacia enfermedades cardiometabólicas. Su finalidad es:
 
 - invitar al acompañamiento preventivo
 - facilitar acceso a planes estructurados de bienestar y control
@@ -105,8 +105,8 @@ Representan la información médica disponible para personalizar el contenido de
 | MDLS_calculable | Booleano | Indica si el MDLS puede calcularse con la data disponible. | Elegir flujo de interpretación (MDLS vs biomarcadores individuales). | No se comunica al paciente. |
 | MDLS_score | Numérico (float) | Puntaje continuo de desregulación metabólica (si MDLS_calculable = true). | Base para segmentación interna del paquete. | No se comunica ni se menciona "MDLS". |
 | MDLS_tier | Categórica (BAJO / MEDIO / ALTO) | Banda interna derivada del MDLS_score. | Seleccionar paquete y tono. | No se comunica al paciente. |
-| Biomarcadores MDLS (9) | Numérico (float) por biomarcador | Valores disponibles de los biomarcadores del MDLS (p. ej., GLU, HBA1C, LDL, HDL, VLDL, TG, PLT, HGB, ALT; ver catálogo interno). | Apoyar segmentación cuando MDLS no es calculable. | No se comunica el nombre ni el valor del biomarcador. |
-| Flags por biomarcador | Categórica (NORMAL / FUERA_RANGO / SIN_DATO) | Estado clínico por biomarcador según reglas clínicas internas. | Determinar nivel de riesgo interno cuando no hay MDLS. | No se comunica al paciente. |
+| Biomarcadores MDLS (9) | Numérico (float) por biomarcador | Valores disponibles de los biomarcadores del MDLS (p. ej., GLU, HBA1C, LDL, HDL, VLDL, TG, PLT, HGB, ALT; ver catálogo interno). | Apoyar segmentación cuando MDLS no es calculable o hay datos parciales. | No se comunica el nombre ni el valor del biomarcador. |
+| Flags por biomarcador | Categórica (NORMAL / FUERA_RANGO / SIN_DATO) | Estado clínico por biomarcador según reglas clínicas internas. | Determinar nivel de riesgo interno cuando no hay MDLS, incluso con datos parciales. | No se comunica al paciente. |
 | Derivadas MDLS | Numérico (float) | Ratios/derivadas internas (TG_HDL_RATIO, AST_ALT_RATIO, NON_HDL). | Ajuste fino del riesgo interno. | No se comunica. |
 | Canales de comorbilidad | Numérico (float) | CREAT y FIB-4 si están disponibles. | Solo como modulación interna (no diagnóstica). | No se comunican. |
 
@@ -137,7 +137,28 @@ Tabla de uso interno para la interpretacion de MDLS y biomarcadores, que debe ut
 - MDLS_tier define el paquete base (Standard / Silver / Gold) cuando MDLS_calculable = true
 - La recencia NO cambia el paquete en niveles altos, solo ajusta el tono
 - Si MDLS_calculable = false, se usa el riesgo derivado de biomarcadores disponibles (biomarker_risk_tier)
-- Si solo existe data de un biomarcador, NO se calcula MDLS, pero si hay riesgo potencial se puede asignar Silver segun biomarker_risk_tier
+- Si solo existe data de un biomarcador, NO se calcula MDLS, pero si hay riesgo potencial se puede asignar Silver segun biomarker_risk_tier, aun si el biomarcador no es HbA1c
+- Si el único biomarcador disponible indica riesgo potencial de diabetes y/o desregulacion metabolica, se prioriza un mensaje preventivo con acompanamiento (sin explicitar el motivo)
+
+### 4.1.1 Perfiles metabolicos plausibles y asignacion de paquetes (interno)
+
+Los siguientes perfiles resumen combinaciones clinicamente plausibles entre biomarcadores y comorbilidades. Estos patrones se usan para definir `biomarker_risk_tier` cuando el MDLS no es calculable, y para evitar escenarios aislados poco probables (por ejemplo, HDL alterado de forma unica).
+
+Reglas generales:
+
+- Un perfil requiere al menos **dos biomarcadores relacionados** en alteracion coherente, o **un biomarcador + un canal de comorbilidad** (CREAT o FIB-4).
+- Un marcador aislado sin coherencia metabolica no determina paquete por si mismo; se clasifica como **bajo riesgo**.
+- La presencia de afectacion renal o hepatica relevante **eleva el paquete** cuando hay evidencia metabolica asociada, incluso si la glucosa/HbA1c es baja.
+- Si solo existe un biomarcador disponible y es clinicamente relevante (p. ej., GLU/HBA1C, TG muy alto, CREAT o FIB-4), puede clasificarse como **riesgo medio** por precaucion.
+
+| **Perfil interno** | **Patron clinico plausible** | **Biomarcadores relacionados (ejemplos)** | **biomarker_risk_tier** | **Paquete sugerido** |
+| --- | --- | --- | --- | --- |
+| Disglucemia + dislipidemia aterogenica | Alteracion conjunta de control glucemico y perfil lipidico | GLU/HBA1C alterado + TG/VLDL alto + HDL bajo o TG_HDL_RATIO alto | ALTO | GOLD |
+| Perfil hepato-metabolico | Alteracion hepatica con senales de dislipidemia y/o glucemia | ALT alto + TG/VLDL alto o TG_HDL_RATIO alto ± GLU/HBA1C alterado | ALTO | GOLD |
+| Perfil renal-metabolico | Afectacion renal con dislipidemia o disglucemia | CREAT alterado + GLU/HBA1C alterado o TG/VLDL alto | ALTO | GOLD |
+| Dislipidemia aterogenica predominante | Alteracion lipidica coherente sin disglucemia marcada | TG/VLDL alto + HDL bajo + NON_HDL o LDL alto | MEDIO | SILVER |
+| Disglucemia predominante | Alteracion glucemica sin dislipidemia marcada | GLU o HBA1C alterado con otro marcador de soporte (p. ej., TG_HDL_RATIO alto) | MEDIO | SILVER |
+| Alteraciones leves o parciales | Cambios discretos sin patron metabolico consistente | Un biomarcador aislado o hallazgos marginales | BAJO | STANDARD |
 
 | **Condicion interna** | **Recencia del ultimo examen** | **Paquete asignado (interno)** | **Urgencia narrativa interna** | **Enfoque del discurso comercial** |
 | --- | --- | --- | --- | --- |
@@ -146,8 +167,8 @@ Tabla de uso interno para la interpretacion de MDLS y biomarcadores, que debe ut
 | MDLS_tier = MEDIO | >= 90 dias | SILVER | Seguimiento atrasado | "Retomar acompanamiento puede marcar diferencia" |
 | MDLS_tier = BAJO | > 365 dias | STANDARD | Seguimiento general pendiente | "Invitacion a chequeo preventivo y acompanamiento" |
 | MDLS_tier = BAJO | <= 365 dias | STANDARD | Prevencion activa | "Programa inicial para habitos y control temprano" |
-| MDLS_calculable = false AND biomarker_risk_tier = ALTO | Cualquier recencia | SILVER | Intervencion oportuna | "Acompanamiento mas estructurado para cuidar su salud" |
-| MDLS_calculable = false AND biomarker_risk_tier = MEDIO | Cualquier recencia | STANDARD | Prevencion temprana | "Etapa ideal para prevenir desregulacion metabolica" |
+| MDLS_calculable = false AND biomarker_risk_tier = ALTO | Cualquier recencia | GOLD | Alta prioridad | "Acompanamiento mas estructurado para cuidar su salud" |
+| MDLS_calculable = false AND biomarker_risk_tier = MEDIO | Cualquier recencia | SILVER | Intervencion oportuna | "Etapa ideal para prevenir desregulacion metabolica" |
 | MDLS_calculable = false AND biomarker_risk_tier = BAJO | > 365 dias | STANDARD (bienestar general) | Baja urgencia | "Programa de salud metabolica y control periodico" |
 
 ## 4.2 Prohibicion explicita de comunicacion del examen
@@ -166,19 +187,19 @@ Tabla de uso interno para la interpretacion de MDLS y biomarcadores, que debe ut
 
 ## 4.3 Traducción narrativa externa - tipo de lenguaje habilitado
 
-El paciente nunca ve "HbA1c", ni "rango", ni palabras como "seguimiento necesario", sino que recibe una invitación de bienestar adaptada. En la siguiente tabla se muestra un ejemplo de de la adaptación narrativa según el principio rector:
+El paciente nunca ve nombres de biomarcadores ni el "MDLS", ni "rango", ni palabras como "seguimiento necesario", sino que recibe una invitación de bienestar adaptada. En la siguiente tabla se muestra un ejemplo de de la adaptación narrativa según el principio rector:
 
-- HbA1c es un indicador de control metabólico, no un diagnóstico automático.
-- El correo debe invitar al seguimiento, no etiquetar clínicamente al paciente.
+- Los biomarcadores del MDLS son indicadores de salud metabolica, no diagnosticos automaticos.
+- El correo debe invitar al seguimiento, no etiquetar clinicamente al paciente.
 
 | **Paquete interno** | **Condición interna (uso sistema)** | **Apertura recomendada (neutral)** | **Enfoque del mensaje** | **\*CTA sugerido** |
 | --- | --- | --- | --- | --- |
-| STANDARD | HbA1c 5.7-6.0 o 6.1-7.4 con recencia ≤365d | "Queremos invitarle a un programa pensado para cuidar su salud desde etapas tempranas." | Prevención, hábitos, acompañamiento inicial | "Conozca el Plan Standard" |
-| STANDARD | HbA1c &lt;5.7 pero sin control &gt;365d | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
-| SILVER | HbA1c 7.5-8.9 con examen reciente | "Este puede ser un buen momento para fortalecer su bienestar y seguimiento médico." | Control activo, apoyo más frecuente | "Conozca el Plan Silver" |
-| SILVER | HbA1c 7.5-8.9 con recencia >90d | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
-| SILVER | HbA1c 6.1-7.4 pero sin seguimiento >365d | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
-| GOLD | HbA1c ≥9.0 cualquier recencia | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
+| STANDARD | MDLS_tier = BAJO con recencia ≤365d | "Queremos invitarle a un programa pensado para cuidar su salud desde etapas tempranas." | Prevención, hábitos, acompañamiento inicial | "Conozca el Plan Standard" |
+| STANDARD | MDLS_tier = BAJO con recencia >365d o biomarker_risk_tier = BAJO | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
+| SILVER | MDLS_tier = MEDIO con examen reciente | "Este puede ser un buen momento para fortalecer su bienestar y seguimiento médico." | Control activo, apoyo más frecuente | "Conozca el Plan Silver" |
+| SILVER | MDLS_tier = MEDIO con recencia >90d o biomarker_risk_tier = MEDIO | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
+| SILVER | MDLS_calculable = false con un biomarcador clinicamente relevante y sin otros datos | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
+| GOLD | MDLS_tier = ALTO cualquier recencia o biomarker_risk_tier = ALTO | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
 
 \*CTA: _Call To Action_, "Llamada a la acción".
 
@@ -430,7 +451,7 @@ Propósito técnico: Definir las restricciones no negociables que rigen el compo
 | --- | --- | --- |
 | Prohibición de diagnóstico automatizado | El modelo no puede diagnosticar, confirmar enfermedades ni sustituir una consulta médica. | "Usted tiene diabetes" / "Esto confirma un problema clínico" |
 | Restricción de inferencia clínica | El modelo no puede asumir ni mencionar síntomas, tratamientos, complicaciones o antecedentes no disponibles en las variables de entrada. | "Necesita insulina" / "Tiene daño renal" |
-| Prohibición de comunicación de información clínica sensible | El modelo no debe comunicar resultados médicos específicos como motivo del contacto. | Mencionar valores de HbA1c / Fechas de exámenes / "Le escribimos por su resultado" |
+| Prohibición de comunicación de información clínica sensible | El modelo no debe comunicar resultados médicos específicos como motivo del contacto. | Mencionar valores de biomarcadores o MDLS / Fechas de exámenes / "Le escribimos por su resultado" |
 | Disclaimer obligatorio y voluntariedad | Todo correo debe incluir el disclaimer institucional fijo: no es diagnóstico, no reemplaza consulta médica, participación voluntaria y opción de baja. | Omitir disclaimer / Presentar el programa como obligatorio |
 
 En consecuencia, un correo cumple esta sección si:
@@ -473,12 +494,12 @@ Propósito técnico: Definir cómo debe mantenerse y actualizarse esta ficha té
 
 ## 10.1 Principio de extensibilidad
 
-Esta guía está diseñada para evolucionar desde un modelo basado principalmente en HbA1c hacia un modelo multivariable. Nuevas variables potenciales incluyen:
+Esta guía está diseñada para evolucionar desde un modelo multivariable basado en MDLS hacia un modelo enriquecido con otras variables. Nuevas variables potenciales incluyen:
 
 - edad
 - IMC
 - presión arterial
-- historial longitudinal de HbA1c
+- historial longitudinal de biomarcadores disponibles
 - comorbilidades registradas
 - otros perfiles (lipídico, hepático, etc.)
 - frecuencia de controles, entre otros.
@@ -498,14 +519,14 @@ Ninguna variable puede ser utilizada por el modelo si no está documentada expl�
 
 Las futuras versiones del modelo deben mantener funcionalidad mínima con el set actual de variables. Esto implica que:
 
-- el sistema debe seguir operando correctamente si solo existe HbA1c disponible
+- el sistema debe seguir operando correctamente si solo existe data de un biomarcador del MDLS
 - la ausencia de nuevas variables no debe generar errores ni inferencias
 
 ## 10.4 Control de versiones del documento
 
 La ficha técnica debe mantenerse bajo versionamiento formal:
 
-- Versión 1.0: HbA1c + recencia
+- Versión 1.0: MDLS + biomarcadores (9) + recencia
 - Versión 2.0: incorporación de variables adicionales
 - Versiones menores: ajustes de estilo, compliance o plantillas institucionales
 
