@@ -100,6 +100,10 @@ Estas variables permiten que el mensaje será enviado correctamente y mantenga u
 
 Representan la información médica disponible para personalizar el contenido del mensaje.
 
+### 3.2.1 Introducción al MDLS y su relación con el generador
+
+El MDLS (Metabolic Dysregulation Latent Score) es un índice continuo que resume la desregulación cardiometabólica a partir de un conjunto de biomarcadores de laboratorio. No es un biomarcador aislado, sino una síntesis de patrones metabólicos. En este generador, el MDLS y sus biomarcadores asociados se usan únicamente para segmentación interna y selección de tono/paquete, sin comunicar resultados ni mencionar el índice al paciente.
+
 | **Variable** | **Tipo** | **Descripción** | **Uso permitido** | **Restricción** |
 | --- | --- | --- | --- | --- |
 | MDLS_calculable | Booleano | Indica si el MDLS puede calcularse con la data disponible. | Elegir flujo de interpretación (MDLS vs biomarcadores individuales). | No se comunica al paciente. |
@@ -195,11 +199,11 @@ El paciente nunca ve nombres de biomarcadores ni el "MDLS", ni "rango", ni palab
 | **Paquete interno** | **Condición interna (uso sistema)** | **Apertura recomendada (neutral)** | **Enfoque del mensaje** | **\*CTA sugerido** |
 | --- | --- | --- | --- | --- |
 | STANDARD | MDLS_tier = BAJO con recencia ≤365d | "Queremos invitarle a un programa pensado para cuidar su salud desde etapas tempranas." | Prevención, hábitos, acompañamiento inicial | "Conozca el Plan Standard" |
-| STANDARD | MDLS_tier = BAJO con recencia >365d o biomarker_risk_tier = MEDIO | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
+| STANDARD | MDLS_tier = BAJO con recencia >365d o biomarker_risk_tier = BAJO | "Un chequeo periódico es una gran herramienta para mantenerse en equilibrio." | Bienestar general y monitoreo preventivo | "Agende una evaluación de rutina" |
 | SILVER | MDLS_tier = MEDIO con examen reciente | "Este puede ser un buen momento para fortalecer su bienestar y seguimiento médico." | Control activo, apoyo más frecuente | "Conozca el Plan Silver" |
-| SILVER | MDLS_tier = MEDIO con recencia >90d o biomarker_risk_tier = ALTO | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
-| SILVER | MDLS_calculable = false con un solo biomarcador fuera de rango | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
-| GOLD | MDLS_tier = ALTO cualquier recencia | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
+| SILVER | MDLS_tier = MEDIO con recencia >90d o biomarker_risk_tier = MEDIO | "Retomar un acompañamiento médico estructurado puede ayudarle a sentirse mejor y más tranquilo." | Reenganche sin culpa, continuidad | "Agende una llamada de orientación" |
+| SILVER | MDLS_calculable = false con un biomarcador clinicamente relevante y sin otros datos | "A veces, contar con un plan más completo facilita mantener constancia y control." | Estructura adicional, seguimiento más regular | "Explore el Plan Silver" |
+| GOLD | MDLS_tier = ALTO cualquier recencia o biomarker_risk_tier = ALTO | "Contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud." | Evaluación amplia, apoyo multidisciplinario sin alarmar | "Conozca el Plan Gold" |
 
 \*CTA: _Call To Action_, "Llamada a la acción".
 
