@@ -155,8 +155,6 @@ Reglas generales:
 - La presencia de afectacion renal o hepatica relevante **eleva el paquete** cuando hay evidencia metabolica asociada, incluso si la glucosa/HbA1c es baja.
 - Si solo existe un biomarcador disponible y es clinicamente relevante (p. ej., GLU/HBA1C, TG muy alto, CREAT o FIB-4), puede clasificarse como **riesgo medio** por precaucion.
 
-Tabla 1. Perfiles clinicos plausibles para derivar `biomarker_risk_tier` y paquete sugerido cuando MDLS no es calculable.
-
 | **Perfil interno** | **Patron clinico plausible** | **Biomarcadores relacionados (ejemplos)** | **biomarker_risk_tier** | **Paquete sugerido** |
 | --- | --- | --- | --- | --- |
 | Disglucemia + dislipidemia aterogenica | Alteracion conjunta de control glucemico y perfil lipidico | GLU/HBA1C alterado + TG/VLDL alto + HDL bajo o TG_HDL_RATIO alto | ALTO | GOLD |
@@ -165,8 +163,6 @@ Tabla 1. Perfiles clinicos plausibles para derivar `biomarker_risk_tier` y paque
 | Dislipidemia aterogenica predominante | Alteracion lipidica coherente sin disglucemia marcada | TG/VLDL alto + HDL bajo + NON_HDL o LDL alto | MEDIO | SILVER |
 | Disglucemia predominante | Alteracion glucemica sin dislipidemia marcada | GLU o HBA1C alterado con otro marcador de soporte (p. ej., TG_HDL_RATIO alto) | MEDIO | SILVER |
 | Alteraciones leves o parciales | Cambios discretos sin patron metabolico consistente | Un biomarcador aislado o hallazgos marginales | BAJO | STANDARD |
-
-Tabla 2. Reglas de asignacion de paquete y tono segun MDLS/biomarcadores y recencia.
 
 | **Condicion interna** | **Recencia del ultimo examen** | **Paquete asignado (interno)** | **Urgencia narrativa interna** | **Enfoque del discurso comercial** |
 | --- | --- | --- | --- | --- |
