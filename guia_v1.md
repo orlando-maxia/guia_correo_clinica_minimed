@@ -164,6 +164,7 @@ Reglas generales:
 | Disglucemia predominante | Alteracion glucemica sin dislipidemia marcada | GLU o HBA1C alterado con otro marcador de soporte (p. ej., TG_HDL_RATIO alto) | MEDIO | SILVER |
 | Alteraciones leves o parciales | Cambios discretos sin patron metabolico consistente | Un biomarcador aislado o hallazgos marginales | BAJO | STANDARD |
 
+
 | **Condicion interna** | **Recencia del ultimo examen** | **Paquete asignado (interno)** | **Urgencia narrativa interna** | **Enfoque del discurso comercial** |
 | --- | --- | --- | --- | --- |
 | MDLS_tier = ALTO | Cualquier recencia | GOLD | Alta prioridad | Invitacion a plan integral y completo de acompanamiento |
