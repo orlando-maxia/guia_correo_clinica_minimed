@@ -71,19 +71,62 @@ El cuerpo del correo generado debe seguir **exactamente** estos 7 bloques:
 
 **No personalizable:** estructura, tono preventivo, disclaimer, firma institucional, enlaces y canales oficiales.
 
-## 6) Restricciones (guardrails)
+## 6) Estilo base por paquete + variabilidad controlada
+El LLM debe generar el cuerpo del email con el estilo, tono y enfoque del paquete asignado (Standard/Silver/Gold), usando las plantillas base como referencia semántica.
+
+El modelo no debe copiar literal, pero sí conservar el mismo tipo de mensaje, nivel de acompañamiento y CTA.
+
+## 7) Inputs narrativos permitidos (LLM)
+Para personalización narrativa, el LLM solo puede usar los siguientes campos:
+
+```json
+{
+  "narrative_inputs": {
+    "recency_type": "PRIMER_EXAMEN | HISTORICO",
+    "days_since_last_exam": 120,
+    "package": "STANDARD | SILVER | GOLD",
+    "program_name": "Programa Minimed"
+  }
+}
+```
+
+Estos inputs no exponen biomarcadores ni datos clínicos sensibles, y delimitan qué información puede aparecer en el texto.
+
+## 8) Prompt Contract (obligatorio)
+Reglas del contrato para la generación del cuerpo del email:
+
+- Estructura obligatoria de 7 bloques.
+- Longitud 120–220 palabras (sin disclaimer).
+- No mencionar resultados, biomarcadores ni términos prohibidos.
+- Tono preventivo, no alarmista.
+- Personalización permitida solo con:
+  - `patient_name`
+  - `recency_type` / `days_since_last_exam`
+  - `package`
+  - beneficios generales del plan
+
+## 9) Biblioteca de ejemplos ancla por paquete
+Las plantillas base funcionan como **anchor exemplars** de estilo, no como outputs fijos.
+
+- STANDARD → prevención general.
+- SILVER → acompañamiento más activo.
+- GOLD → programa integral.
+
+El LLM debe parecerse en tono y enfoque a estos ejemplos, pero con variaciones de wording y énfasis según recencia y paquete.
+
+## 10) Restricciones (guardrails)
 - No mencionar MDLS, biomarcadores, valores de laboratorio ni fechas específicas de examen.
 - No diagnosticar ni inferir síntomas, tratamientos o complicaciones.
 - No usar lenguaje de alarma, culpa o urgencia.
 - No prometer resultados clínicos.
 
-## 7) Output esperado
+## 11) Output esperado
 - **Salida del generador:** solo el **cuerpo del email** (texto principal).
 - **Idioma:** español formal (usted/su).
 - **Longitud:** 120–220 palabras (sin disclaimer).
 - **Excluye:** firma institucional, disclaimer legal, links, teléfono y opción de baja (se agregan por plantilla externa).
 
-## 8) Campos institucionales (fuera del modelo)
+## 12) Campos institucionales (fuera del modelo)
 Insertados por sistema de plantillas:
 - Nombre oficial de la clínica y del programa.
 - Nombres de planes (Standard, Silver, Gold).
@@ -91,4 +134,3 @@ Insertados por sistema de plantillas:
 - Teléfono y correo institucional.
 - Firma fija.
 - Disclaimer legal y opción de baja.
-
