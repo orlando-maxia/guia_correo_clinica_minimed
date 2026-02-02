@@ -1,0 +1,11 @@
+Hola {{patient_name}}, esperamos que se encuentre muy bien.
+
+{{recency_message}}
+
+En Minimed queremos ofrecerle un acompañamiento más activo para cuidar su salud y bienestar, y mantener un seguimiento continuo. Nuestro programa está diseñado para brindar apoyo cercano y estructurado en su bienestar.
+
+El Plan Silver incluye orientación más frecuente, herramientas prácticas y un esquema de seguimiento que facilita la constancia y la tranquilidad. La idea es que cuente con un plan claro y accesible para avanzar paso a paso.
+
+Si desea conocer el Plan Silver, con gusto podemos compartirle más información y ayudarle a iniciar.
+
+Quedamos atentos a su respuesta.
