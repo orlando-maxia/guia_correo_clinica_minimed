@@ -18,7 +18,7 @@ REGLAS DE CONTENIDO
 - Respetar la estructura mínima obligatoria definida en guia_v1.md.
 - El bloque final debe contemplar cierre institucional y disclaimer obligatorio según guía.
 
-ESTRUCTURA OBLIGATORIA (7 BLOQUES EN ESTE ORDEN)
+ESTRUCTURA OBLIGATORIA (7 BLOQUES, SEGÚN EL ORDEN SUGERIDO)
 1) Apertura empática y neutral: saludo personalizado permitido, tono calmado, sin referencias clínicas.
 2) Invitación general al cuidado de la salud: enfoque preventivo y de bienestar.
 3) Presentación del programa como apoyo (no como tratamiento): acompañamiento voluntario.
