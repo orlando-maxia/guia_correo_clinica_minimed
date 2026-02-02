@@ -71,6 +71,14 @@ El cuerpo del correo generado debe seguir **exactamente** estos 7 bloques:
 
 **No personalizable:** estructura, tono preventivo, disclaimer, firma institucional, enlaces y canales oficiales.
 
+### 5.1 Ejemplos de `recency_message`
+`recency_message` es una frase breve que ajusta el tono según la recencia, sin mencionar resultados ni fechas específicas.
+
+**GENERAL (sin distinción por recencia)**
+- "Queremos invitarle a conocer el programa y sus beneficios de una forma simple y cercana."
+- "Si le interesa, podemos compartirle cómo funciona el programa y los pasos para comenzar."
+
+## 6) Restricciones (guardrails)
 ## 6) Estilo base por paquete + variabilidad controlada
 El LLM debe generar el cuerpo del email con el estilo, tono y enfoque del paquete asignado (Standard/Silver/Gold), usando las plantillas base como referencia semántica.
 

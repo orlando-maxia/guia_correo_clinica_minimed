@@ -1,0 +1,11 @@
+Hola {{patient_name}}, esperamos que se encuentre muy bien.
+
+{{recency_message}}
+
+En Minimed contamos con un programa integral diseñado para brindarle un acompañamiento completo en su salud y bienestar. Nuestro enfoque es ofrecerle una experiencia de seguimiento cercana, organizada y confiable.
+
+El Plan Gold reúne un apoyo más amplio y coordinado, con guía continua para que se sienta acompañado en cada etapa. Buscamos que tenga claridad, confianza y una ruta de bienestar bien definida.
+
+Si le interesa conocer el Plan Gold, con gusto podemos compartirle más detalles y próximos pasos.
+
+Quedamos atentos a su respuesta.

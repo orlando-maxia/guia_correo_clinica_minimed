@@ -1,0 +1,11 @@
+Hola {{patient_name}}, esperamos que se encuentre muy bien.
+
+{{recency_message}}
+
+Desde Minimed queremos invitarle a cuidar su salud y bienestar de manera preventiva y cercana. Contamos con un programa pensado para acompañarle desde etapas tempranas, con orientación práctica y seguimiento amable.
+
+El Plan Standard le ofrece una base clara para mantener hábitos saludables y realizar controles preventivos periódicos, con apoyo continuo cuando lo necesite. Buscamos que se sienta informado y acompañado, sin presiones ni alarmas.
+
+Si le interesa conocer más del Plan Standard, con gusto podemos compartirle los pasos para comenzar.
+
+Quedamos atentos a su respuesta.
