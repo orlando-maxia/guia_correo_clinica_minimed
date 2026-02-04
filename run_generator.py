@@ -20,6 +20,8 @@ decision_input = DecisionInput(
     comorbidity_channels=payload["clinical"].get("comorbidity_channels"),
 )
 
+package = assign_package(decision_input)
+
 def load_openai_key(path: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         line = f.read().strip()
