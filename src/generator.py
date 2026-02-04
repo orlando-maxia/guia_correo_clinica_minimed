@@ -22,7 +22,7 @@ def build_prompt(
     package: str,
     recency_type: str,
     days_since_last_exam: int,
-    program_name: str = "Programa de Diabetes de Minimed",
+    program_name: str = "Programa Preventivo de Minimed",
 ) -> str:
     """Build the prompt contract for the LLM, including narrative anchors."""
     normalized_package = _normalize_package(package)
@@ -58,7 +58,7 @@ def generate_email(
     recency_type: str,
     days_since_last_exam: int,
     llm: Callable[[str], str],
-    program_name: str = "Programa de Diabetes de Minimed",
+    program_name: str = "Programa Preventivo de Minimed",
     validator: Callable[[str], None] | None = validate_email,
 ) -> str:
     """Generate the email body using a single LLM call."""
