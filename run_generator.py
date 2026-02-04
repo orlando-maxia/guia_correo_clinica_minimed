@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 from src.generator import generate_email
 from src.static_content import assemble_full_email
+from src.decision_engine import DecisionInput, assign_package
 import json
 from pathlib import Path
 
