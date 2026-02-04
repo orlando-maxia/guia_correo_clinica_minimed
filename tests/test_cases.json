@@ -1,0 +1,50 @@
+[
+  {
+    "id": "case_001_mdls_bajo_reciente",
+    "input": {
+      "patient": {"patient_name": "Ana"},
+      "clinical": {"mdls_calculable": true, "mdls_tier": "BAJO"},
+      "temporal": {"days_since_last_exam": 40, "recency_type": "HISTORICO"}
+    },
+    "expected": {"package": "STANDARD", "recency_bucket": "HISTORICO_RECIENTE"}
+  },
+  {
+    "id": "case_002_mdls_medio_90d",
+    "input": {
+      "patient": {"patient_name": "Luis"},
+      "clinical": {"mdls_calculable": true, "mdls_tier": "MEDIO"},
+      "temporal": {"days_since_last_exam": 120, "recency_type": "HISTORICO"}
+    },
+    "expected": {"package": "SILVER", "recency_bucket": "HISTORICO_MEDIO"}
+  },
+  {
+    "id": "case_003_mdls_alto_cualquiera",
+    "input": {
+      "patient": {"patient_name": "Camila"},
+      "clinical": {"mdls_calculable": true, "mdls_tier": "ALTO"},
+      "temporal": {"days_since_last_exam": 10, "recency_type": "HISTORICO"}
+    },
+    "expected": {"package": "GOLD", "recency_bucket": "HISTORICO_RECIENTE"}
+  },
+  {
+    "id": "case_004_biomarkers_glu_tg",
+    "input": {
+      "patient": {"patient_name": "Marcela"},
+      "clinical": {
+        "mdls_calculable": false,
+        "biomarker_flags": {"GLU": "FUERA_RANGO", "TG": "FUERA_RANGO"}
+      },
+      "temporal": {"days_since_last_exam": 380, "recency_type": "HISTORICO"}
+    },
+    "expected": {"package": "GOLD", "recency_bucket": "HISTORICO_LARGO"}
+  },
+  {
+    "id": "case_005_primer_examen",
+    "input": {
+      "patient": {"patient_name": "Ignacio"},
+      "clinical": {"mdls_calculable": true, "mdls_tier": "BAJO"},
+      "temporal": {"days_since_last_exam": 0, "recency_type": "PRIMER_EXAMEN"}
+    },
+    "expected": {"package": "STANDARD", "recency_bucket": "PRIMER_EXAMEN"}
+  }
+]

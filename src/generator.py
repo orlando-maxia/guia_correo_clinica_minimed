@@ -4,6 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Callable
 
+from .compliance import validate_email
+
 ALLOWED_PACKAGES = {"STANDARD", "SILVER", "GOLD"}
 ALLOWED_RECENCY_TYPES = {"PRIMER_EXAMEN", "HISTORICO"}
 
@@ -57,6 +59,7 @@ def generate_email(
     days_since_last_exam: int,
     llm: Callable[[str], str],
     program_name: str = "Programa de Diabetes de Minimed",
+    validator: Callable[[str], None] | None = validate_email,
 ) -> str:
     """Generate the email body using a single LLM call."""
     if llm is None:
@@ -69,7 +72,10 @@ def generate_email(
         days_since_last_exam=days_since_last_exam,
         program_name=program_name,
     )
-    return llm(prompt).strip()
+    response = llm(prompt).strip()
+    if validator is not None:
+        validator(response)
+    return response
 
 
 def build_recency_message(recency_type: str, days_since_last_exam: int) -> str:
