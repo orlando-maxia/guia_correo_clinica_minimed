@@ -1,0 +1,13 @@
+{
+  "patient": {
+    "patient_name": "Ana"
+  },
+  "clinical": {
+    "mdls_calculable": true,
+    "mdls_tier": "BAJO"
+  },
+  "temporal": {
+    "days_since_last_exam": 40,
+    "recency_type": "HISTORICO"
+  }
+}
